@@ -24,7 +24,7 @@ impl ArgParser {
                     Ok(file) => Some(file),
                     Err(e) => return Err(
                         io::Error::new(io::ErrorKind::InvalidInput, 
-                            format!("File not found at {}, with error {}", &value, e),
+                            format!("Error with file at {}: error {}", &value, e),
                         )
                     ),
                 };
@@ -34,12 +34,15 @@ impl ArgParser {
                 "-c" => bits |= Self::BYTES,
                 "-l" => bits |= Self::LINES,
                 "-w" => bits |= Self::WORDS,
-                // "-m" => bits |= Self::CHARS,
+                "-m" => bits |= Self::CHARS,
                 invalid_flag => return Err(io::Error::new(
                     io::ErrorKind::InvalidInput, 
                     format!(  "Invalid flag provided {}", invalid_flag) 
                 )),
-            }            
+            }
+        }
+        if bits == 0 {
+            bits = Self::ALL;
         }
         match file {
             Some(file) => Ok(ArgParser{bits, file}),
@@ -130,6 +133,26 @@ mod tests {
                 "-c".to_string(),
                 "-w".to_string(),
                 "-m".to_string(),
+                 path_string.clone()
+                 ]
+        )
+            .unwrap();
+
+        assert_eq!(result.bits, ArgParser::ALL);
+        let mut buf : Vec<u8> = Vec::new();
+        let file_res = result.file.read_to_end(&mut buf);
+        assert_eq!(file_res.unwrap(), 13);
+        assert_eq!(buf, b"Hello, World!");
+    }
+
+    #[test]
+    fn should_create_from_args_with_no_flags() {
+        let temp_dir = setup_temp_file("file4.txt");
+        let path = temp_dir.as_path();
+        let path_string = path.to_str().unwrap().to_string();
+        let mut result = ArgParser
+        ::from_args(
+            vec![
                  path_string.clone()
                  ]
         )
