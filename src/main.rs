@@ -1,6 +1,7 @@
 use std::{env, io::{self, BufRead, Read},};
 
-use rust_wc::ArgParser;
+mod arg_parser;
+use arg_parser::ArgParser;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
