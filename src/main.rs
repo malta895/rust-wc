@@ -1,10 +1,10 @@
+mod arg_parser;
+
 use std::{
     env,
     fs::File,
     io::{self, BufRead, BufReader, Read, Seek},
 };
-
-mod arg_parser;
 use arg_parser::ArgParser;
 
 fn main() {
