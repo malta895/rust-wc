@@ -1,4 +1,4 @@
-use std::{io};
+use std::io;
 
 pub struct ArgParser {
     pub bits: u32,
@@ -47,12 +47,10 @@ impl ArgParser {
 #[cfg(test)]
 mod tests {
     use crate::ArgParser;
-    use std::env;
-    use std::path::PathBuf;
 
     #[test]
     fn should_create_from_args_with_c() {
-        let mut result = ArgParser::from_args(
+        let  result = ArgParser::from_args(
             vec!["-c".to_string(), "file.txt".to_string()]
         )
             .unwrap();
@@ -62,7 +60,7 @@ mod tests {
 
     #[test]
     fn should_create_from_args_with_l() {
-        let mut result = ArgParser::from_args(
+        let result = ArgParser::from_args(
             vec!["-l".to_string(), "file.txt".to_string()]
         )
             .unwrap();
