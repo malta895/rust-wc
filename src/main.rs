@@ -4,7 +4,8 @@ use arg_parser::ArgParser;
 use std::{
     env,
     fs::File,
-    io::{self, BufRead, BufReader, Read, Seek}, ops::Bound,
+    io::{self, BufRead, BufReader, Read, Seek},
+    ops::Bound,
 };
 
 fn main() {
@@ -22,9 +23,7 @@ fn main() {
             let mut buf_reader: BufReader<File>;
 
             match std::fs::File::open(file_name.clone()) {
-                Ok(file) => {
-                    buf_reader = io::BufReader::new( file)
-                }
+                Ok(file) => buf_reader = io::BufReader::new(file),
                 Err(e) => {
                     eprintln!("{}", e.to_string());
                     print_usage(true);
@@ -93,7 +92,8 @@ fn count_lines_and_bytes(buf_reader: &mut BufReader<File>) -> (usize, usize) {
     let mut lines_total: usize = 0;
     let mut bytes_total: usize = 0;
     let mut str_buf = String::new();
-    while let Ok(bytes_count) = buf_reader.read_line(&mut str_buf) {
+    loop {
+        let bytes_count = buf_reader.read_line(&mut str_buf).unwrap();
         if bytes_count == 0 {
             break;
         }
