@@ -5,7 +5,6 @@ use std::{
     env,
     fs::File,
     io::{self, BufRead, BufReader, Read, Seek},
-    ops::Bound,
 };
 
 fn main() {
@@ -54,6 +53,12 @@ fn main() {
                 has_printed = true
             }
 
+            if args.bits & ArgParser::WORDS != 0 {
+                let words = count_words(&mut buf_reader);
+                print_val(&mut has_printed, words);
+                has_printed = true;
+            }
+
             print!(" {}\n", file_name);
         }
         Err(e) => {
@@ -84,8 +89,7 @@ fn count_lines(buf_reader: &mut BufReader<File>) -> usize {
 
 fn count_bytes(buf_reader: &mut BufReader<File>) -> usize {
     let mut buf: Vec<u8> = Vec::new();
-    let read = buf_reader.read_to_end(&mut buf);
-    read.unwrap()
+    buf_reader.read_to_end(&mut buf).unwrap()
 }
 
 fn count_lines_and_bytes(buf_reader: &mut BufReader<File>) -> (usize, usize) {
@@ -99,6 +103,21 @@ fn count_lines_and_bytes(buf_reader: &mut BufReader<File>) -> (usize, usize) {
         }
         lines_total += 1;
         bytes_total += bytes_count;
+        str_buf.clear();
     }
     (lines_total, bytes_total)
+}
+
+fn count_words(buf_reader: &mut BufReader<File>) -> usize {
+    let mut words_total: usize = 0;
+    let mut str_buf = String::new();
+    loop {
+        let bytes_count = buf_reader.read_line(&mut str_buf).unwrap();
+        if bytes_count == 0 {
+            break;
+        }
+        words_total += str_buf.split_whitespace().count();
+        str_buf.clear();
+    }
+    words_total
 }
