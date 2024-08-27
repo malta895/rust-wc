@@ -59,6 +59,12 @@ fn main() {
                 has_printed = true;
             }
 
+            if args.bits & ArgParser::CHARS != 0 {
+                let chars = count_characters(&mut buf_reader);
+                print_val(&mut has_printed, chars);
+                has_printed = true
+            }
+
             print!(" {}\n", file_name);
         }
         Err(e) => {
@@ -120,4 +126,14 @@ fn count_words(buf_reader: &mut BufReader<File>) -> usize {
         str_buf.clear();
     }
     words_total
+}
+
+fn count_characters(buf_reader: &mut BufReader<File>) -> usize {
+    let mut characters_count: usize = 0;
+    let mut str_buf = String::new();
+    while buf_reader.read_to_string(&mut str_buf).unwrap() != 0 {
+        characters_count += str_buf.chars().count();
+        str_buf.clear();
+    }
+    characters_count
 }
